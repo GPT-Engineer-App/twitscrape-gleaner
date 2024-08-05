@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { cn } from "@/lib/utils";
 
 const BEARER_TOKEN = 'YOUR_BEARER_TOKEN';
 
@@ -51,10 +52,15 @@ const Index = () => {
   ] : [];
 
   return (
-    <div className="min-h-screen p-8 bg-gray-100">
+    <div className="min-h-screen p-8 bg-cyan-50">
       <Card className="max-w-4xl mx-auto">
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold text-center">Twitter Performance Analyzer</CardTitle>
+        <CardHeader className="relative">
+          <img 
+            src="https://upload.wikimedia.org/wikipedia/commons/5/57/X_logo_2023_%28white%29.png" 
+            alt="X (Twitter) Logo" 
+            className="absolute top-4 right-4 w-12 h-12 opacity-80"
+          />
+          <CardTitle className="text-2xl font-bold text-center text-cyan-700">X (Twitter) Performance Analyzer</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="mb-6">
@@ -66,16 +72,16 @@ const Index = () => {
                 onChange={(e) => setUsername(e.target.value)}
                 className="flex-grow"
               />
-              <Button type="submit">Analyze</Button>
+              <Button type="submit" className="bg-cyan-600 hover:bg-cyan-700">Analyze</Button>
             </div>
           </form>
 
-          {isLoading && <p>Loading...</p>}
-          {isError && <p>Error fetching data. Please try again.</p>}
+          {isLoading && <p className="text-cyan-600">Loading...</p>}
+          {isError && <p className="text-red-500">Error fetching data. Please try again.</p>}
 
           {showData && data && (
             <div className="mt-8">
-              <h2 className="text-xl font-semibold mb-4">Performance Data for @{username}</h2>
+              <h2 className="text-xl font-semibold mb-4 text-cyan-700">Performance Data for @{username}</h2>
               <ResponsiveContainer width="100%" height={400}>
                 <LineChart data={chartData}>
                   <CartesianGrid strokeDasharray="3 3" />
@@ -83,7 +89,7 @@ const Index = () => {
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Line type="monotone" dataKey="value" stroke="#8884d8" />
+                  <Line type="monotone" dataKey="value" stroke="#0891b2" />
                 </LineChart>
               </ResponsiveContainer>
             </div>
