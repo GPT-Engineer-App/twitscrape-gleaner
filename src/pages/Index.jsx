@@ -7,6 +7,10 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 
 const BEARER_TOKEN = 'YOUR_BEARER_TOKEN';
 
+const reverseString = (str) => {
+  return str.split('').reverse().join('');
+};
+
 const fetchTwitterData = async (username) => {
   const response = await fetch(`https://api.twitter.com/2/users/by/username/${username}?user.fields=public_metrics`, {
     headers: {
@@ -22,6 +26,8 @@ const fetchTwitterData = async (username) => {
 const Index = () => {
   const [username, setUsername] = useState('');
   const [showData, setShowData] = useState(false);
+  const [stringToReverse, setStringToReverse] = useState('');
+  const [reversedString, setReversedString] = useState('');
 
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ['twitterData', username],
@@ -33,6 +39,10 @@ const Index = () => {
     e.preventDefault();
     setShowData(true);
     refetch();
+  };
+
+  const handleReverseString = () => {
+    setReversedString(reverseString(stringToReverse));
   };
 
   const chartData = data ? [
@@ -52,6 +62,27 @@ const Index = () => {
 
   return (
     <div className="min-h-screen p-8 bg-gray-100">
+      <Card className="max-w-4xl mx-auto mb-8">
+        <CardHeader>
+          <CardTitle className="text-2xl font-bold text-center">String Reverser</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex space-x-2 mb-4">
+            <Input
+              type="text"
+              placeholder="Enter a string to reverse"
+              value={stringToReverse}
+              onChange={(e) => setStringToReverse(e.target.value)}
+              className="flex-grow"
+            />
+            <Button onClick={handleReverseString}>Reverse</Button>
+          </div>
+          {reversedString && (
+            <p className="mt-4">Reversed string: <strong>{reversedString}</strong></p>
+          )}
+        </CardContent>
+      </Card>
+
       <Card className="max-w-4xl mx-auto">
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-center">Twitter Performance Analyzer</CardTitle>
