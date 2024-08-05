@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { useToast } from "@/components/ui/use-toast";
+import { motion } from 'framer-motion';
 
 const BEARER_TOKEN = 'YOUR_BEARER_TOKEN';
 
@@ -107,10 +108,25 @@ const Index = () => {
   ] : [];
 
   return (
-    <div className="min-h-screen p-8 bg-gray-100">
-      <div className="flex justify-end mb-4">
-        <Button onClick={handleLogout}>Logout</Button>
-      </div>
+    <div className="min-h-screen p-8 bg-gray-100 relative overflow-hidden">
+      <motion.div
+        className="absolute top-0 left-0 w-full h-full pointer-events-none"
+        animate={{
+          scale: [1, 1.1, 1],
+          rotate: [0, 10, -10, 0],
+        }}
+        transition={{
+          duration: 20,
+          ease: "easeInOut",
+          repeat: Infinity,
+        }}
+      >
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-300 rounded-full opacity-20 blur-3xl" />
+      </motion.div>
+      <div className="relative z-10">
+        <div className="flex justify-end mb-4">
+          <Button onClick={handleLogout}>Logout</Button>
+        </div>
       <Card className="max-w-4xl mx-auto mb-8">
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-center">String Reverser</CardTitle>
@@ -173,6 +189,7 @@ const Index = () => {
           )}
         </CardContent>
       </Card>
+      </div>
     </div>
   );
 };
