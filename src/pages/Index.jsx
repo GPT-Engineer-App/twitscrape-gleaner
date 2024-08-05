@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { motion } from 'framer-motion';
+import { toast } from 'sonner';
 
 const BEARER_TOKEN = 'YOUR_BEARER_TOKEN';
 
@@ -13,15 +14,21 @@ const reverseString = (str) => {
 };
 
 const fetchTwitterData = async (username) => {
-  const response = await fetch(`https://api.twitter.com/2/users/by/username/${username}?user.fields=public_metrics`, {
-    headers: {
-      'Authorization': `Bearer ${BEARER_TOKEN}`
+  try {
+    const response = await fetch(`https://api.twitter.com/2/users/by/username/${username}?user.fields=public_metrics`, {
+      headers: {
+        'Authorization': `Bearer ${BEARER_TOKEN}`
+      }
+    });
+    if (!response.ok) {
+      throw new Error('Failed to fetch Twitter data');
     }
-  });
-  if (!response.ok) {
-    throw new Error('Failed to fetch Twitter data');
+    return response.json();
+  } catch (error) {
+    console.error('Error fetching Twitter data:', error);
+    toast.error('Failed to fetch Twitter data. Please try again.');
+    return null;
   }
-  return response.json();
 };
 
 const Index = () => {
@@ -46,7 +53,7 @@ const Index = () => {
     setReversedString(reverseString(stringToReverse));
   };
 
-  const chartData = data ? [
+  const chartData = data && data.data ? [
     {
       metric: 'Followers',
       value: data.data.public_metrics.followers_count
@@ -120,7 +127,7 @@ const Index = () => {
           {isLoading && <p>Loading...</p>}
           {isError && <p>Error fetching data. Please try again.</p>}
 
-          {showData && data && (
+          {showData && data && data.data && (
             <div className="mt-8">
               <h2 className="text-xl font-semibold mb-4">Performance Data for @{username}</h2>
               <ResponsiveContainer width="100%" height={400}>
@@ -134,6 +141,9 @@ const Index = () => {
                 </LineChart>
               </ResponsiveContainer>
             </div>
+          )}
+          {showData && (!data || !data.data) && (
+            <p className="mt-4 text-red-500">No data available for this username. Please try another.</p>
           )}
         </CardContent>
       </Card>
