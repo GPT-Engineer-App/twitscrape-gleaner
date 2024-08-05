@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -6,6 +6,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 const BEARER_TOKEN = 'YOUR_BEARER_TOKEN';
+
+const fetchName = async () => {
+  const response = await fetch('/name');
+  if (!response.ok) {
+    throw new Error('Failed to fetch name');
+  }
+  return response.json();
+};
 
 const reverseString = (str) => {
   return str.split('').reverse().join('');
@@ -28,6 +36,13 @@ const Index = () => {
   const [showData, setShowData] = useState(false);
   const [stringToReverse, setStringToReverse] = useState('');
   const [reversedString, setReversedString] = useState('');
+  const [nameData, setNameData] = useState(null);
+
+  useEffect(() => {
+    fetchName()
+      .then(data => setNameData(data))
+      .catch(error => console.error('Error fetching name:', error));
+  }, []);
 
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ['twitterData', username],
@@ -88,6 +103,9 @@ const Index = () => {
           <CardTitle className="text-2xl font-bold text-center">Twitter Performance Analyzer</CardTitle>
         </CardHeader>
         <CardContent>
+          {nameData && (
+            <p className="mb-4 text-center">Welcome, {nameData.name}!</p>
+          )}
           <form onSubmit={handleSubmit} className="mb-6">
             <div className="flex space-x-2">
               <Input
